@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+
+control_c(){
+  echo -en "\n*** Snot ***\n"
+  exit $?
+}
+
+trap control_c SIGINT
+
+while true; do
+  eval "go test -v ./..."
+
+  sleep 5
+done
