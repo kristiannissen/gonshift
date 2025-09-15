@@ -1,5 +1,5 @@
-# gonshift
+# GonShift
 
-https://docs.nshiftgo.com/
+
 
 
