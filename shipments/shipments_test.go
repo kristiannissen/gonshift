@@ -1,6 +1,8 @@
 package shipments
 
 import (
+	"encoding/json"
+	"log"
 	"os"
 	"strconv"
 	"testing"
@@ -8,13 +10,31 @@ import (
 
 func TestPostShipment(t *testing.T) {
 	//
-	shipment := Shipment{}
+	shipment := Shipment{
+		Data: map[string]any{
+			"Kind":    1,
+			"ActorId": 2,
+			"Name":    "Kitty",
+		},
+		Options: map[string]any{
+			"Labels": "PDF",
+		},
+	}
 
 	actorId, _ := strconv.Atoi(os.Getenv("ACTOR_ID"))
-	got, _ := PostShipments(actorId, &shipment)
-	want := "Hello"
+	blob, e := PostShipments(actorId, &shipment)
+	if e != nil {
+		log.Fatalf("e %s", e)
+	}
+	want := "Kitty"
 
-	if want != got {
-		t.Errorf("Got %s, want %s", got, want)
+	var s Shipment
+
+	if err := json.Unmarshal([]byte(blob), &s); err != nil {
+		log.Fatalf("Json %T", err)
+	}
+
+	if want != s.Data["Name"] {
+		t.Errorf("Got %s, want %s", shipment, want)
 	}
 }

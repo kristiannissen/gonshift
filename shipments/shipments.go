@@ -1,15 +1,23 @@
 /*
-
-*/
+ */
 package shipments
 
+import (
+	"encoding/json"
+	"log"
+)
+
 type Shipment struct {
-  Data struct {} `json:"data"`
-  Options struct {
-    Labels string `sjon:"Labels"`
-  } `json:"options"`
+	Data    map[string]interface{} `json:"data,omitempty"`
+	Options map[string]interface{} `json:"options,omitempty"`
 }
 
 func PostShipments(actorId int, shipment *Shipment) (string, error) {
-  return "Hello", nil
+	b, err := json.MarshalIndent(shipment, "", "  ")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(b), err
 }
