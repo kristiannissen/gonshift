@@ -1,0 +1,118 @@
+package addons
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/http/httputil"
+)
+
+type Config struct {
+	ActorId      string
+	Access_Token string
+}
+
+type Address struct {
+	Kind        int    `json:"Kind"`
+	Name1       string `json:"Name1"`
+	Street1     string `json:"Street1"`
+	PostCode    string `json:"PostCode"`
+	City        string `json:"City"`
+	CountryCode string `json:"CountryCode"`
+}
+
+type Data struct {
+	Kind          int   `json:"Kind"`
+	ProdConceptID int   `json:"ProdConceptID"`
+	Services      []int `json:"Services"`
+	Addresses     []Address
+}
+
+type DataObject struct {
+	Data    Data                   `json:"data"`
+	Options map[string]interface{} `json:"options"`
+}
+
+type Reference struct {
+	Kind  int
+	Value string
+}
+
+type DropPoint struct {
+	OriginalID        string
+	RoutingCode       string
+	Depot             string
+	Name1             string
+	Name2             string
+	Street1           string
+	Street2           string
+	PostCode          string
+	City              string
+	State             string
+	Region            string
+	County            string
+	District          string
+	Province          string
+	CountryCode       string
+	Contact           string
+	Phone             string
+	Fax               string
+	Email             string
+	Latitude          float64
+	Longitude         float64
+	Distance          float32
+	Type              string
+	DropPointImageUrl string
+	DropPointType     string
+	References        []Reference
+}
+
+// Will post to {{URL}}/ShipServer/{{ID}}/DropPoints
+func GetDropPoints(ctx context.Context, endpoint string, cfg Config, payload DataObject) ([]DropPoint, error) {
+	endpoint = fmt.Sprintf(endpoint, cfg.ActorId)
+	p, _ := json.Marshal(payload)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewBuffer(p))
+	if err != nil {
+		log.Fatal(err)
+		return []DropPoint{}, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", cfg.Access_Token))
+
+	if rd, err := httputil.DumpRequestOut(req, true); err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println(string(rd))
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+		if ctx.Err() == context.DeadlineExceeded {
+			return []DropPoint{}, ctx.Err()
+		}
+		return []DropPoint{}, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return []DropPoint{}, fmt.Errorf("error %s", resp.Status)
+	}
+
+	if b, err := io.ReadAll(resp.Body); err != nil {
+		log.Fatal(err)
+		return []DropPoint{}, err
+	} else {
+		d := []DropPoint{}
+		json.Unmarshal(b, &d)
+		return d, nil
+	}
+}
