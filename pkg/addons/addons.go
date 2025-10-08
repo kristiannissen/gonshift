@@ -1,14 +1,12 @@
 package addons
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"net/http/httputil"
+
+	"gonshift/internal/restclient"
 )
 
 type Config struct {
@@ -76,41 +74,16 @@ func GetDropPoints(ctx context.Context, endpoint string, cfg Config, payload Dat
 	endpoint = fmt.Sprintf(endpoint, cfg.ActorId)
 	p, _ := json.Marshal(payload)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewBuffer(p))
-	if err != nil {
-		log.Fatal(err)
-		return []DropPoint{}, err
-	}
+	c := restclient.NewRestClient(
+		restclient.WithEndpoint(endpoint),
+		restclient.WithAccessToken(cfg.Access_Token),
+	)
 
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", cfg.Access_Token))
-
-	if rd, err := httputil.DumpRequestOut(req, true); err != nil {
-		log.Fatal(err)
-	} else {
-		log.Println(string(rd))
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-		if ctx.Err() == context.DeadlineExceeded {
-			return []DropPoint{}, ctx.Err()
-		}
-		return []DropPoint{}, err
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return []DropPoint{}, fmt.Errorf("error %s", resp.Status)
-	}
-
-	if b, err := io.ReadAll(resp.Body); err != nil {
+	if b, err := c.Post(ctx, p); err != nil {
 		log.Fatal(err)
 		return []DropPoint{}, err
 	} else {
+		// Unmarshal and return DropPoints
 		d := []DropPoint{}
 		json.Unmarshal(b, &d)
 		return d, nil

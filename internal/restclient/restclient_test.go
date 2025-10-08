@@ -31,7 +31,6 @@ func TestRestClientPostSuccess(t *testing.T) {
 
 	c := NewRestClient(
 		WithDebug(true),
-		WithPayload([]byte(`Hello Kitty`)),
 		WithEndpoint(mockServer.URL),
 		WithAccessToken(os.Getenv("ACCESS_TOKEN")),
 	)
