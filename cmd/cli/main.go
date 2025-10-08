@@ -49,7 +49,7 @@ func main() {
 	if cfg, err := authenticate.Authenticate(context.Background(), "https://account.nshiftportal.com/idp/connect/token", cfg); err != nil {
 		panic(err)
 	} else {
-		if _, err := io.WriteString(fmt.Sprintf("ACCESS_TOKEN='%s'", cfg.Access_Token)); err != nil {
+		if _, err := io.WriteString(fmt.Sprintf("ACCESS_TOKEN='%s'", cfg.AccessToken)); err != nil {
 			panic(err)
 		}
 	}

@@ -1,0 +1,162 @@
+{
+    "ShpCSID": 545266607,
+    "ShpTag": "963A086B-92BA-4766-813A-DF9AA626AE17",
+    "InstallationID": "30000160520",
+    "PhysicalInstallationID": "20001795127",
+    "Kind": 1,
+    "ShpNo": "40170733746262282016",
+    "OrderNo": "ST43335595",
+    "PickupDt": "2025-10-08T00:00:00",
+    "LabelPrintDt": "2025-10-08T14:31:51",
+    "SubmitDt": "2025-10-08T14:31:51",
+    "TransmitDt": "2025-10-08T14:36:37",
+    "Weight": 500,
+    "ActorCSID": 1763,
+    "Temperature": 1,
+    "CarriagePayer": 1,
+    "CarrierConceptID": 47,
+    "CarrierCSID": 142,
+    "SubcarrierConceptID": 98,
+    "SubcarrierCSID": 251,
+    "ProdConceptID": 553,
+    "ProdCSID": 1122,
+    "StackCSID": 25632,
+    "PayerAccountAtCarrier": "01007170",
+    "SenderAccountAtCarrier": "01007170",
+    "Addresses": [
+        {
+            "Kind": 1,
+            "Name1": "Test Test",
+            "Street1": "Test 4",
+            "PostCode": "0579",
+            "City": "Oslo",
+            "Phone": "+4712345678",
+            "Mobile": "+4712345678",
+            "Email": "test@example.com",
+            "Attention": "Test Test",
+            "CountryCode": "NO",
+            "Residential": false
+        },
+        {
+            "Kind": 10,
+            "Name1": "Pakkeboks Vinslottet",
+            "Street1": "BØKKERVEIEN 4",
+            "PostCode": "0579",
+            "City": "OSLO",
+            "CustNo": "110175",
+            "CountryCode": "NO",
+            "ERPRef": "110175",
+            "Residential": false
+        },
+        {
+            "Kind": 9,
+            "Name1": "Test Test",
+            "Street1": "c/o Logistikksenteret",
+            "PostCode": "0060",
+            "City": "OSLO",
+            "POPostCode": "2450",
+            "POCity": "KØBENHAVN SV",
+            "CustNo": "0",
+            "CountryCode": "DK",
+            "ERPRef": "0",
+            "Residential": false
+        },
+        {
+            "Kind": 2,
+            "Name1": "Test A/S",
+            "Name2": "",
+            "Street1": "Test 2, Hal 8",
+            "PostCode": "4600",
+            "City": "Test",
+            "Phone": "+4512345678",
+            "Attention": "Test",
+            "CountryCode": "DK",
+            "Residential": false
+        }
+    ],
+    "References": [
+        {
+            "Kind": 54,
+            "Value": "B"
+        },
+        {
+            "Kind": 34,
+            "Value": "$AUTO$$FNC1$42157800579$FNC1$"
+        },
+        {
+            "Kind": 56,
+            "Value": "(421)57800579"
+        }
+    ],
+    "CSEvents": [
+        {
+            "Kind": 4,
+            "Date": "2025-10-08T14:31:51",
+            "User": "SS/1763/SubmitShipment",
+            "EventTag": "7A38F7A4-C931-4F10-907A-D94B7F69C7F0"
+        },
+        {
+            "Kind": 17,
+            "Date": "2025-10-08T14:36:39",
+            "User": "TPrepareTransmit",
+            "EventTag": "5C729EC4-8BDF-4B26-A264-3D1614DA7B86"
+        },
+        {
+            "Kind": 29,
+            "Date": "2025-10-08T14:36:39",
+            "User": "TPrepareTransmit",
+            "EventTag": "19933E4F-BDFC-4BBF-ABD0-2C1ADA2EF12B"
+        }
+    ],
+    "Lines": [
+        {
+            "LineCSID": 578721083,
+            "LineTag": "F446BF48-8D98-4222-A0BE-D4324373893A",
+            "LineWeight": 500,
+            "PkgWeight": 500,
+            "Pkgs": [
+                {
+                    "PkgCSID": 610886505,
+                    "ItemNo": 1,
+                    "PkgTag": "FF93D971-9132-4DF6-8BCB-10D034E9BDF2",
+                    "PkgNo": "00370733746262282000",
+                    "CSEvents": [
+                        {
+                            "Kind": 8,
+                            "KindName": "Package label printed",
+                            "Date": "2025-10-08T14:31:51",
+                            "User": "SS/1763/SubmitShipment",
+                            "EventTag": "566F60E1-6C88-4907-925C-DF9DC173362B"
+                        }
+                    ]
+                }
+            ],
+            "References": [
+                {
+                    "Kind": 23,
+                    "Value": "Textile"
+                },
+                {
+                    "Kind": 52,
+                    "Value": "PNLU15"
+                }
+            ]
+        }
+    ],
+    "Services": [
+        47001,
+        47023
+    ],
+    "ShpDocuments": [
+        {
+            "ShpCSID": 545266607,
+            "DocumentID": 74,
+            "DocumentCSID": 687134708,
+            "Copies": 1,
+            "DocumentName": "Label DK.PNL",
+            "PrintedDt": "2025-10-08T14:31:51",
+            "DocumentType": "Label"
+        }
+    ],
+    "CorrelationID": "6046adbe-c86e-45ec-9f0e-ee4f326ac38e"
+}

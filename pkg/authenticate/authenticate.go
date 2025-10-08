@@ -20,10 +20,10 @@ import (
 )
 
 type Config struct {
-	ClientId     string `json:client_id`
-	ClientSecret string `json:client_secret`
-	Access_Token string `json:access_token`
-	Expires_In   int    `json:expires_id`
+	ClientId     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	AccessToken  string `json:"access_token"`
+	Expires_In   int    `json:"expires_id"`
 }
 
 func Authenticate(ctx context.Context, endpoint string, cfg Config) (Config, error) {

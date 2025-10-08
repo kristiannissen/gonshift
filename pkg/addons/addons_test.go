@@ -45,8 +45,8 @@ func TestGetDropPoint(t *testing.T) {
 
 	// Create the config struct
 	cfg := Config{
-		Access_Token: os.Getenv("ACCESS_TOKEN"),
-		ActorId:      os.Getenv("ACTOR_ID"),
+		AccessToken: os.Getenv("ACCESS_TOKEN"),
+		ActorId:     os.Getenv("ACTOR_ID"),
 	}
 
 	// Payload
@@ -91,8 +91,8 @@ func TestDropPointTimeout(t *testing.T) {
 
 	// Create the config struct
 	cfg := Config{
-		Access_Token: os.Getenv("ACCESS_TOKEN"),
-		ActorId:      os.Getenv("ACTOR_ID"),
+		AccessToken: os.Getenv("ACCESS_TOKEN"),
+		ActorId:     os.Getenv("ACTOR_ID"),
 	}
 
 	// Payload

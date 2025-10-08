@@ -10,8 +10,8 @@ import (
 )
 
 type Config struct {
-	ActorId      string
-	Access_Token string
+	ActorId     string
+	AccessToken string
 }
 
 type Address struct {
@@ -76,7 +76,7 @@ func GetDropPoints(ctx context.Context, endpoint string, cfg Config, payload Dat
 
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(endpoint),
-		restclient.WithAccessToken(cfg.Access_Token),
+		restclient.WithAccessToken(cfg.AccessToken),
 	)
 
 	if b, err := c.Post(ctx, p); err != nil {
