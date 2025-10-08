@@ -51,7 +51,7 @@ func TestGetShipmentSuccess(t *testing.T) {
 	cfg := Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
-		Endpoint:    fmt.Sprintf("https://restapi.shipmentserver.com/shipServer/%s/shipments/963A086B-92BA-4766-813A-DF9AA626AE17", os.Getenv("ACTOR_ID")),
+		Endpoint:    fmt.Sprintf(mockServer.URL, os.Getenv("ACTOR_ID")),
 	}
 
 	if _, err := GetShipment(ctx, cfg); err != nil {
