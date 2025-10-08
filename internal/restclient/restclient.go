@@ -6,7 +6,7 @@ package restclient
 //
 import (
 	"bytes"
-	"errors"
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -17,20 +17,21 @@ import (
 func init() {
 }
 
-// TODO: Add boolean for debug
 type RestClient struct {
-	endpoint string
-	token    string
-	payload  []byte
+	Endpoint    string
+	AccessToken string
+	Payload     []byte
+	Debug       bool
 }
 
 type Option func(*RestClient)
 
 func NewRestClient(opts ...Option) *RestClient {
 	r := &RestClient{
-		endpoint: "",
-		token:    "",
-		payload:  []byte("{}"),
+		Endpoint:    "",
+		AccessToken: "",
+		Payload:     []byte("{}"),
+		Debug:       false,
 	}
 
 	for _, opt := range opts {
@@ -40,68 +41,73 @@ func NewRestClient(opts ...Option) *RestClient {
 	return r
 }
 
-func WithEndPoint(endpoint string) Option {
+func WithEndpoint(endpoint string) Option {
 	return func(r *RestClient) {
-		r.endpoint = endpoint
+		r.Endpoint = endpoint
 	}
 }
 
-func WithToken(token string) Option {
+func WithAccessToken(token string) Option {
 	return func(r *RestClient) {
-		r.token = token
+		r.AccessToken = token
 	}
 }
 
 func WithPayload(payload []byte) Option {
 	return func(r *RestClient) {
-		r.payload = payload
+		r.Payload = payload
 	}
 }
 
-// TODO: add context
-func (r *RestClient) Post() ([]byte, error) {
-	req, err := http.NewRequest(http.MethodPost, r.endpoint, bytes.NewReader(r.payload))
+func WithDebug(b bool) Option {
+	return func(r *RestClient) {
+		r.Debug = b
+	}
+}
+
+func (r *RestClient) Post(ctx context.Context, payload []byte) ([]byte, error) {
+	// TODO: Update payload
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, r.Endpoint, bytes.NewBuffer(r.Payload))
 	if err != nil {
 		log.Fatal(err)
-		return []byte{}, err
+		return []byte(``), err
 	}
 
-	err = nil
-
-	// Add headers
+	// Create headers and authorization
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", r.token))
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", r.AccessToken))
 
-	err = nil
-
-	d, err := httputil.DumpRequest(req, true)
-	if err != nil {
-		log.Fatal(err)
-		return []byte{}, err
+	if r.Debug == true {
+		// Debug is enabled
+		if rd, err := httputil.DumpRequestOut(req, true); err != nil {
+			log.Fatal(err)
+		} else {
+			log.Println(string(rd))
+		}
 	}
 
-	log.Println(string(d))
-
-	res, err := http.DefaultClient.Do(req)
+	c := &http.Client{}
+	res, err := c.Do(req)
 	if err != nil {
 		log.Fatal(err)
-		return []byte{}, err
+		// Check ctx error
+		if ctx.Err() == context.DeadlineExceeded {
+			return []byte(``), ctx.Err()
+		}
+		return []byte(``), err
 	}
+
 	defer res.Body.Close()
 
-	err = nil
-
-	if res.StatusCode != 200 {
+	if res.StatusCode != http.StatusOK {
 		log.Fatal(res.Status)
-		return []byte{}, errors.New(res.Status)
+		return []byte(``), fmt.Errorf("error %s", res.Status)
 	}
 
-	b, err := io.ReadAll(res.Body)
-
-	if err != nil {
+	if b, err := io.ReadAll(res.Body); err != nil {
 		log.Fatal(err)
-		return []byte{}, err
+		return []byte(``), err
+	} else {
+		return b, nil
 	}
-
-	return b, nil
 }

@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"testing"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -70,5 +71,55 @@ func TestGetDropPoint(t *testing.T) {
 
 	if _, err := GetDropPoints(ctx, mockServer.URL+"/%s", cfg, payload); err != nil {
 		t.Fatalf("DropPoints failed %v", err)
+	}
+}
+
+func TestDropPointTimeout(t *testing.T) {
+	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Simulate timeout
+		time.Sleep(200 * time.Millisecond)
+		// All sorts of things will be going on here
+		w.WriteHeader(http.StatusOK)
+		// Write to body
+		w.Write([]byte(`{}`))
+	}))
+	// Close the server
+	defer mockServer.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), (50 * time.Millisecond))
+	defer cancel()
+
+	// Create the config struct
+	cfg := Config{
+		Access_Token: os.Getenv("ACCESS_TOKEN"),
+		ActorId:      os.Getenv("ACTOR_ID"),
+	}
+
+	// Payload
+	payload := DataObject{
+		Data: Data{
+			Kind:          1,
+			ProdConceptID: 553,
+			Services:      []int{47001, 47023},
+			Addresses: []Address{
+				{
+					Kind:        1,
+					Name1:       "Test Test",
+					Street1:     "Test Street 1",
+					PostCode:    "7224",
+					City:        "Verdal",
+					CountryCode: "NO",
+				},
+			},
+		},
+		Options: map[string]any{},
+	}
+
+	if _, err := GetDropPoints(ctx, mockServer.URL+"/%s", cfg, payload); err != nil {
+		t.Fatalf("DropPoints failed %v", err)
+	}
+
+	if ctx.Err() != context.DeadlineExceeded {
+		t.Fatal(ctx.Err())
 	}
 }
