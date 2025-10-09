@@ -2,6 +2,7 @@ package shipments
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,11 +24,11 @@ func init() {
 // arguments would be *testing, filename
 //
 //	[]byte
-func setupTestDataObject(t *testing.T) []byte {
+func fixture(t *testing.T, name string) []byte {
 	// Helper marks the calling function as a test helper function
 	t.Helper()
 	// Load fixture file and return []byte()
-	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", "shipment.json")); err != nil {
+	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", name)); err != nil {
 		log.Fatal(err)
 		return []byte(``)
 	} else {
@@ -35,12 +36,12 @@ func setupTestDataObject(t *testing.T) []byte {
 	}
 }
 
-func TestGetShipmentSuccess(t *testing.T) {
+func TestSaveShipment(t *testing.T) {
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// All sorts of things will be going on here
 		w.WriteHeader(http.StatusOK)
 		// Return the fixture data
-		w.Write(setupTestDataObject(t))
+		w.Write(fixture(t, "shipment_response.json"))
 	}))
 	// Close the server
 	defer mockServer.Close()
@@ -51,7 +52,41 @@ func TestGetShipmentSuccess(t *testing.T) {
 	cfg := Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
-		Endpoint:    fmt.Sprintf(mockServer.URL, os.Getenv("ACTOR_ID")),
+		Endpoint:    fmt.Sprintf(mockServer.URL+"/%s", os.Getenv("ACTOR_ID")),
+	}
+	// Load and marshal shipment to json
+	s := map[string]any{}
+	if b, err := os.ReadFile(path.Join("..", "..", "fixtures", "shipment_request.json")); err != nil {
+		log.Fatal(err)
+	} else {
+		json.Unmarshal(b, &s)
+	}
+
+	if _, err := SaveShipment(ctx, cfg, DataObject{
+		Data:    s,
+		Options: map[string]any{"Labels": "PDF"},
+	}); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetShipment(t *testing.T) {
+	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// All sorts of things will be going on here
+		w.WriteHeader(http.StatusOK)
+		// Return the fixture data
+		w.Write(fixture(t, "shipments.json"))
+	}))
+	// Close the server
+	defer mockServer.Close()
+
+	ctx := context.Background()
+
+	// Create the config struct
+	cfg := Config{
+		AccessToken: os.Getenv("ACCESS_TOKEN"),
+		ActorId:     os.Getenv("ACTOR_ID"),
+		Endpoint:    fmt.Sprintf(mockServer.URL+"/%s", os.Getenv("ACTOR_ID")),
 	}
 
 	if _, err := GetShipment(ctx, cfg); err != nil {
