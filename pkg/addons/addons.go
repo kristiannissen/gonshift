@@ -20,6 +20,10 @@ type DataObject struct {
 	Options map[string]interface{} `json:"options,omitempty"`
 }
 
+func GetDropPoint(ctx context.Context, cfg Config) (DataObject, error) {
+	return DataObject{}, nil
+}
+
 func GetDropPoints(ctx context.Context, cfg Config, payload DataObject) (DataObject, error) {
 	p, _ := json.Marshal(payload)
 
@@ -33,8 +37,8 @@ func GetDropPoints(ctx context.Context, cfg Config, payload DataObject) (DataObj
 		return DataObject{}, err
 	} else {
 		// Unmarshal and return DropPoints
-		d := DataObject{}
-		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d); err != nil {
+		var d DataObject
+		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d.Data); err != nil {
 			log.Println(err)
 			return d, err
 		}

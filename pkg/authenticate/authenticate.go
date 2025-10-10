@@ -36,7 +36,7 @@ func Authenticate(ctx context.Context, endpoint string, cfg Config) (Config, err
 	// TODO: Could all be moved to a shared feature in the internal folder
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewBuffer([]byte(v.Encode())))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return cfg, fmt.Errorf("request failed %w", err)
 	}
 
@@ -45,7 +45,7 @@ func Authenticate(ctx context.Context, endpoint string, cfg Config) (Config, err
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		// Check context error
 		if ctx.Err() == context.DeadlineExceeded {
 			return Config{}, fmt.Errorf("the request timed out %w", ctx.Err())
@@ -56,13 +56,13 @@ func Authenticate(ctx context.Context, endpoint string, cfg Config) (Config, err
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("HTTP status code %d", resp.StatusCode)
+		log.Println(resp.StatusCode)
 		return cfg, fmt.Errorf("error %s", resp.Status)
 	}
 
 	if b, err := io.ReadAll(resp.Body); err != nil {
 		// Something went wrong
-		log.Fatal(err)
+		log.Println(err)
 		return Config{}, err
 	} else {
 		//

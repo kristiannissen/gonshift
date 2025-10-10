@@ -14,7 +14,7 @@ import (
 
 func init() {
 	if err := godotenv.Load(path.Join("..", "..", ".env")); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -23,7 +23,7 @@ func fixture(t *testing.T, name string) []byte {
 	t.Helper()
 	// Load fixture file and return []byte()
 	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", name)); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return []byte(``)
 	} else {
 		return d

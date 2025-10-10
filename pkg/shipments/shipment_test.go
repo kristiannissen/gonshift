@@ -15,7 +15,7 @@ import (
 
 func init() {
 	if err := godotenv.Load(path.Join("..", "..", ".env")); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -28,7 +28,7 @@ func fixture(t *testing.T, name string) []byte {
 	t.Helper()
 	// Load fixture file and return []byte()
 	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", name)); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return []byte(``)
 	} else {
 		return d
@@ -56,7 +56,7 @@ func TestSaveShipment(t *testing.T) {
 	// Load and marshal shipment to json
 	s := map[string]any{}
 	if b, err := os.ReadFile(path.Join("..", "..", "fixtures", "shipment_request.json")); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	} else {
 		json.Unmarshal(b, &s)
 	}
@@ -69,7 +69,31 @@ func TestSaveShipment(t *testing.T) {
 	}
 }
 
-func TestGetShipment(t *testing.T) {
+func TestGetDocuments(t *testing.T) {
+	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// All sorts of things will be going on here
+		w.WriteHeader(http.StatusOK)
+		// Return the fixture data
+		w.Write(fixture(t, "documents.json"))
+	}))
+	// Close the server
+	defer mockServer.Close()
+
+	ctx := context.Background()
+
+	// Create the config struct
+	cfg := Config{
+		AccessToken: os.Getenv("ACCESS_TOKEN"),
+		ActorId:     os.Getenv("ACTOR_ID"),
+		Endpoint:    mockServer.URL,
+	}
+
+	if _, err := GetShipments(ctx, cfg); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetShipments(t *testing.T) {
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// All sorts of things will be going on here
 		w.WriteHeader(http.StatusOK)
@@ -88,7 +112,7 @@ func TestGetShipment(t *testing.T) {
 		Endpoint:    mockServer.URL,
 	}
 
-	if _, err := GetShipment(ctx, cfg); err != nil {
+	if _, err := GetShipments(ctx, cfg); err != nil {
 		t.Error(err)
 	}
 }
