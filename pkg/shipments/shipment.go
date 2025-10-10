@@ -34,7 +34,7 @@ func GetShipment(ctx context.Context, cfg Config) (DataObject, error) {
 		return DataObject{}, err
 	} else {
 		var do DataObject
-		json.Unmarshal(b, &do)
+		json.Unmarshal(b, &do.Data)
 		return do, nil
 	}
 }
@@ -56,7 +56,7 @@ func SaveShipment(ctx context.Context, cfg Config, dataobject DataObject) (DataO
 		return DataObject{}, err
 	} else {
 		var do DataObject
-		json.Unmarshal(b, &do)
+		json.Unmarshal(b, &do.Data)
 		return do, nil
 	}
 }
