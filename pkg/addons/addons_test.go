@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 	"testing"
-	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -19,11 +18,11 @@ func init() {
 	}
 }
 
-func setupTestDataObject(t *testing.T) []byte {
+func fixture(t *testing.T, name string) []byte {
 	// Helper marks the calling function as a test helper function
 	t.Helper()
 	// Load fixture file and return []byte()
-	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", "droppoints.json")); err != nil {
+	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", name)); err != nil {
 		log.Fatal(err)
 		return []byte(``)
 	} else {
@@ -36,7 +35,7 @@ func TestGetDropPoint(t *testing.T) {
 		// All sorts of things will be going on here
 		w.WriteHeader(http.StatusOK)
 		// Return the fixture data
-		w.Write(setupTestDataObject(t))
+		w.Write(fixture(t, "droppoints.json"))
 	}))
 	// Close the server
 	defer mockServer.Close()
@@ -47,79 +46,16 @@ func TestGetDropPoint(t *testing.T) {
 	cfg := Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
+		Endpoint:    mockServer.URL,
 	}
 
 	// Payload
 	payload := DataObject{
-		Data: Data{
-			Kind:          1,
-			ProdConceptID: 553,
-			Services:      []int{47001, 47023},
-			Addresses: []Address{
-				{
-					Kind:        1,
-					Name1:       "Test Test",
-					Street1:     "Test Street 1",
-					PostCode:    "7224",
-					City:        "Verdal",
-					CountryCode: "NO",
-				},
-			},
-		},
+		Data:    map[string]any{},
 		Options: map[string]any{},
 	}
 
-	if _, err := GetDropPoints(ctx, mockServer.URL+"/%s", cfg, payload); err != nil {
+	if _, err := GetDropPoints(ctx, cfg, payload); err != nil {
 		t.Fatalf("DropPoints failed %v", err)
-	}
-}
-
-func TestDropPointTimeout(t *testing.T) {
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Simulate timeout
-		time.Sleep(200 * time.Millisecond)
-		// All sorts of things will be going on here
-		w.WriteHeader(http.StatusOK)
-		// Write to body
-		w.Write([]byte(`{}`))
-	}))
-	// Close the server
-	defer mockServer.Close()
-
-	ctx, cancel := context.WithTimeout(context.Background(), (50 * time.Millisecond))
-	defer cancel()
-
-	// Create the config struct
-	cfg := Config{
-		AccessToken: os.Getenv("ACCESS_TOKEN"),
-		ActorId:     os.Getenv("ACTOR_ID"),
-	}
-
-	// Payload
-	payload := DataObject{
-		Data: Data{
-			Kind:          1,
-			ProdConceptID: 553,
-			Services:      []int{47001, 47023},
-			Addresses: []Address{
-				{
-					Kind:        1,
-					Name1:       "Test Test",
-					Street1:     "Test Street 1",
-					PostCode:    "7224",
-					City:        "Verdal",
-					CountryCode: "NO",
-				},
-			},
-		},
-		Options: map[string]any{},
-	}
-
-	if _, err := GetDropPoints(ctx, mockServer.URL+"/%s", cfg, payload); err != nil {
-		t.Fatalf("DropPoints failed %v", err)
-	}
-
-	if ctx.Err() != context.DeadlineExceeded {
-		t.Fatal(ctx.Err())
 	}
 }

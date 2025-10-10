@@ -1,9 +1,9 @@
 package addons
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"gonshift/internal/restclient"
@@ -12,80 +12,32 @@ import (
 type Config struct {
 	ActorId     string
 	AccessToken string
-}
-
-type Address struct {
-	Kind        int    `json:"Kind"`
-	Name1       string `json:"Name1"`
-	Street1     string `json:"Street1"`
-	PostCode    string `json:"PostCode"`
-	City        string `json:"City"`
-	CountryCode string `json:"CountryCode"`
-}
-
-type Data struct {
-	Kind          int   `json:"Kind"`
-	ProdConceptID int   `json:"ProdConceptID"`
-	Services      []int `json:"Services"`
-	Addresses     []Address
+	Endpoint    string
 }
 
 type DataObject struct {
-	Data    Data                   `json:"data"`
-	Options map[string]interface{} `json:"options"`
+	Data    map[string]interface{} `json:"data"`
+	Options map[string]interface{} `json:"options,omitempty"`
 }
 
-type Reference struct {
-	Kind  int
-	Value string
-}
-
-type DropPoint struct {
-	OriginalID        string
-	RoutingCode       string
-	Depot             string
-	Name1             string
-	Name2             string
-	Street1           string
-	Street2           string
-	PostCode          string
-	City              string
-	State             string
-	Region            string
-	County            string
-	District          string
-	Province          string
-	CountryCode       string
-	Contact           string
-	Phone             string
-	Fax               string
-	Email             string
-	Latitude          float64
-	Longitude         float64
-	Distance          float32
-	Type              string
-	DropPointImageUrl string
-	DropPointType     string
-	References        []Reference
-}
-
-// Will post to {{URL}}/ShipServer/{{ID}}/DropPoints
-func GetDropPoints(ctx context.Context, endpoint string, cfg Config, payload DataObject) ([]DropPoint, error) {
-	endpoint = fmt.Sprintf(endpoint, cfg.ActorId)
+func GetDropPoints(ctx context.Context, cfg Config, payload DataObject) (DataObject, error) {
 	p, _ := json.Marshal(payload)
 
 	c := restclient.NewRestClient(
-		restclient.WithEndpoint(endpoint),
+		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
 	)
 
 	if b, err := c.Post(ctx, p); err != nil {
-		log.Fatal(err)
-		return []DropPoint{}, err
+		log.Println(err)
+		return DataObject{}, err
 	} else {
 		// Unmarshal and return DropPoints
-		d := []DropPoint{}
-		json.Unmarshal(b, &d)
+		d := DataObject{}
+		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d); err != nil {
+			log.Println(err)
+			return d, err
+		}
 		return d, nil
 	}
 }
