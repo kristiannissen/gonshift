@@ -1,5 +1,7 @@
 package restclient
 
+//
+
 import (
 	"context"
 	"log"
@@ -8,6 +10,7 @@ import (
 	"os"
 	"path"
 	"testing"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -72,4 +75,35 @@ func TestRestClientError(t *testing.T) {
 	if _, err := c.Get(ctx, []byte(`{"hello": "Kitty"}`)); err.Error() != "Unauthorized" {
 		t.Errorf("error %s", err)
 	}
+}
+
+func TestRestClientTimeout(t *testing.T) {
+	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Create slow response
+		time.Sleep(200 * time.Millisecond)
+		// Provide status
+		w.WriteHeader(http.StatusOK)
+		// Write response body
+		w.Write([]byte(``))
+	}))
+	// Close the server
+	defer mockServer.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), (50 * time.Millisecond))
+	defer cancel()
+
+	c := NewRestClient(
+		WithEndpoint(mockServer.URL),
+		WithAccessToken(os.Getenv("ACCESS_TOKEN")),
+		WithDebug(true),
+	)
+
+	if _, err := c.Get(ctx, []byte(``)); err == nil {
+		t.Errorf("error %s", err)
+	}
+
+	if ctx.Err() != context.DeadlineExceeded {
+		t.Errorf("error %s", ctx.Err())
+	}
+
 }

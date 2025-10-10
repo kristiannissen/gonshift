@@ -1,8 +1,5 @@
 package authenticate
 
-// TODO: Add test for time out
-// TODO: Add test for ...
-
 import (
 	"context"
 	"log"

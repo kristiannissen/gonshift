@@ -3,7 +3,6 @@ package shipments
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -52,7 +51,7 @@ func TestSaveShipment(t *testing.T) {
 	cfg := Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
-		Endpoint:    fmt.Sprintf(mockServer.URL+"/%s", os.Getenv("ACTOR_ID")),
+		Endpoint:    mockServer.URL,
 	}
 	// Load and marshal shipment to json
 	s := map[string]any{}
@@ -86,7 +85,7 @@ func TestGetShipment(t *testing.T) {
 	cfg := Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
-		Endpoint:    fmt.Sprintf(mockServer.URL+"/%s", os.Getenv("ACTOR_ID")),
+		Endpoint:    mockServer.URL,
 	}
 
 	if _, err := GetShipment(ctx, cfg); err != nil {

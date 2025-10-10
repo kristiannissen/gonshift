@@ -19,11 +19,11 @@ type Config struct {
 }
 
 type DataObject struct {
-	Data    any `json:"data"`
-	Options any `json:"options,omitempty"`
+	Data    map[string]interface{} `json:"data"`
+	Options map[string]interface{} `json:"options,omitempty"`
 }
 
-func GetShipment(ctx context.Context, cfg Config) (any, error) {
+func GetShipment(ctx context.Context, cfg Config) (DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -31,15 +31,15 @@ func GetShipment(ctx context.Context, cfg Config) (any, error) {
 	// This method has no body
 	if b, err := c.Get(ctx, []byte(``)); err != nil {
 		log.Fatal(err)
-		return map[string]any{}, err
+		return DataObject{}, err
 	} else {
-		s := map[string]any{}
-		json.Unmarshal(b, &s)
-		return s, nil
+		var do DataObject
+		json.Unmarshal(b, &do)
+		return do, nil
 	}
 }
 
-func SaveShipment(ctx context.Context, cfg Config, dataobject DataObject) (any, error) {
+func SaveShipment(ctx context.Context, cfg Config, dataobject DataObject) (DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -47,16 +47,16 @@ func SaveShipment(ctx context.Context, cfg Config, dataobject DataObject) (any, 
 	// Marshal the shipment
 	s, err := json.Marshal(dataobject)
 	if err != nil {
-		return map[string]any{}, err
+		return DataObject{}, err
 	}
 
 	// This method has no body
 	if b, err := c.Post(ctx, s); err != nil {
 		log.Fatal(err)
-		return map[string]any{}, err
+		return DataObject{}, err
 	} else {
-		s := map[string]any{}
-		json.Unmarshal(b, &s)
-		return s, nil
+		var do DataObject
+		json.Unmarshal(b, &do)
+		return do, nil
 	}
 }

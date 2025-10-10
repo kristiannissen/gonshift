@@ -10,7 +10,7 @@ define GIT_COMMIT
 	git push
 endef
 
-.PHONY: test tidy commit
+.PHONY: test tidy commit tasks
 
 test:
 	@echo "--- Testing $(APP_NAME) ---"
@@ -23,3 +23,7 @@ tidy:
 
 commit:
 	$(call GIT_COMMIT)
+
+tasks:
+	@echo "--- Tasks ---"
+	grep -irn 'todo' .
