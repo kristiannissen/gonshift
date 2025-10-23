@@ -20,7 +20,7 @@ func TestGetDocumentLists(t *testing.T) {
 
 	ctx := context.Background()
 
-	cfg := Config{
+	cfg := &models.Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
 		Endpoint:    mockServer.URL,
@@ -44,7 +44,7 @@ func TestSaveShipment(t *testing.T) {
 	ctx := context.Background()
 
 	// Create the config struct
-	cfg := Config{
+	cfg := &models.Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
 		Endpoint:    mockServer.URL,
@@ -73,7 +73,7 @@ func TestGetDocuments(t *testing.T) {
 	ctx := context.Background()
 
 	// Create the config struct
-	cfg := Config{
+	cfg := &models.Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
 		Endpoint:    mockServer.URL,
@@ -92,7 +92,7 @@ func TestGetShipments(t *testing.T) {
 	ctx := context.Background()
 
 	// Create the config struct
-	cfg := Config{
+	cfg := &models.Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
 		Endpoint:    mockServer.URL,

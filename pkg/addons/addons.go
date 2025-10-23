@@ -10,17 +10,11 @@ import (
 	"gonshift/pkg/models"
 )
 
-type Config struct {
-	ActorId     string
-	AccessToken string
-	Endpoint    string
-}
-
-func GetDropPoint(ctx context.Context, cfg Config) (*models.DataObject, error) {
+func GetDropPoint(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
 	return &models.DataObject{}, nil
 }
 
-func GetDropPoints(ctx context.Context, cfg Config, payload *models.DataObject) (*models.DataObject, error) {
+func GetDropPoints(ctx context.Context, cfg *models.Config, payload *models.DataObject) (*models.DataObject, error) {
 	p, _ := json.Marshal(payload)
 
 	c := restclient.NewRestClient(

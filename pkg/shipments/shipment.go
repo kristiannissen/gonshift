@@ -10,19 +10,9 @@ import (
 	"gonshift/pkg/models"
 )
 
-func init() {
-
-}
-
-type Config struct {
-	ActorId     string
-	AccessToken string
-	Endpoint    string
-}
-
 // https://helpcenter.nshift.com/hc/en-us/articles/4401176907676-API-Documentation#get_shipments
 // Used to return a shipment which has not been deleted.
-func GetShipments(ctx context.Context, cfg Config) (*models.DataObject, error) {
+func GetShipments(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -38,7 +28,7 @@ func GetShipments(ctx context.Context, cfg Config) (*models.DataObject, error) {
 	}
 }
 
-func GetDocumentLists(ctx context.Context, cfg Config, dataobject *models.DataObject) (*models.DataObject, error) {
+func GetDocumentLists(ctx context.Context, cfg *models.Config, dataobject *models.DataObject) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -62,7 +52,7 @@ func GetDocumentLists(ctx context.Context, cfg Config, dataobject *models.DataOb
 	}
 }
 
-func GetDocuments(ctx context.Context, cfg Config) (*models.DataObject, error) {
+func GetDocuments(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -82,7 +72,7 @@ func GetDocuments(ctx context.Context, cfg Config) (*models.DataObject, error) {
 	}
 }
 
-func SaveShipment(ctx context.Context, cfg Config, dataobject *models.DataObject) (*models.DataObject, error) {
+func SaveShipment(ctx context.Context, cfg *models.Config, dataobject *models.DataObject) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),

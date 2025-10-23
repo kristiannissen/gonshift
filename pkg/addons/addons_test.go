@@ -18,7 +18,7 @@ func TestGetDropPoint(t *testing.T) {
 	ctx := context.Background()
 
 	// Create the config struct
-	cfg := Config{
+	cfg := &models.Config{
 		AccessToken: os.Getenv("ACCESS_TOKEN"),
 		ActorId:     os.Getenv("ACTOR_ID"),
 		Endpoint:    mockServer.URL,
