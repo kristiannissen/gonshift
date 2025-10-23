@@ -10,10 +10,32 @@ import (
 	"gonshift/pkg/models"
 )
 
-func GetDropPoint(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
-	return &models.DataObject{}, nil
-}
-
+// GetDropPoints returns drop points (service points) for the given product that supports it.
+// Example usage:
+//
+//	d := GetDropPoints(context.Context, &models.Config{}, &models.DataObject{
+//	  "data": "data": {
+//	    "ProdConceptID": "INT",
+//	    "ResultCount": "INT",
+//	    "Addresses": "ARRAY"
+//	  }
+//	})
+//
+//	OUTPUT: {
+//	   "ProdConceptIDs": [
+//	      5318,
+//	      5319,
+//	      755
+//	   ],
+//	   "ResultCount": "2",
+//	   "Addresses": [
+//	      {
+//	         "Kind": 1,
+//	         "CountryCode": "FR",
+//	         "PostCode": "76000",
+//	         "Street1": "84, rue de Epeule"
+//	      }
+//	   ]
 func GetDropPoints(ctx context.Context, cfg *models.Config, payload *models.DataObject) (*models.DataObject, error) {
 	p, _ := json.Marshal(payload)
 

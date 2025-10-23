@@ -10,7 +10,7 @@ import (
 	"gonshift/testhelper"
 )
 
-func TestGetDropPoint(t *testing.T) {
+func TestGetDropPoints(t *testing.T) {
 	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "droppoints.json"))
 	// Close the server
 	defer mockServer.Close()
