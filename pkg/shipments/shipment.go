@@ -42,6 +42,30 @@ func GetShipments(ctx context.Context, cfg Config) (DataObject, error) {
 	}
 }
 
+func GetDocumentLists(ctx context.Context, cfg Config, dataobject DataObject) (DataObject, error) {
+	c := restclient.NewRestClient(
+		restclient.WithEndpoint(cfg.Endpoint),
+		restclient.WithAccessToken(cfg.AccessToken),
+	)
+
+	s, err := json.Marshal(dataobject)
+	if err != nil {
+		return DataObject{}, err
+	}
+
+	if b, err := c.Get(ctx, s); err != nil {
+		log.Println(err)
+		return DataObject{}, err
+	} else {
+		var d DataObject
+		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d.Data); err != nil {
+			log.Println(err)
+			return DataObject{}, err
+		}
+		return d, nil
+	}
+}
+
 func GetDocuments(ctx context.Context, cfg Config) (DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),

@@ -36,7 +36,7 @@ func GetDropPoints(ctx context.Context, cfg Config, payload DataObject) (DataObj
 		log.Println(err)
 		return DataObject{}, err
 	} else {
-		// Unmarshal and return DropPoints
+		//
 		var d DataObject
 		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d.Data); err != nil {
 			log.Println(err)

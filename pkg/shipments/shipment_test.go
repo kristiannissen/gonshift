@@ -5,43 +5,38 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"path"
 	"testing"
 
-	"github.com/joho/godotenv"
+	"gonshift/testhelper"
 )
 
-func init() {
-	if err := godotenv.Load(path.Join("..", "..", ".env")); err != nil {
-		log.Println(err)
-	}
-}
+func TestGetDocumentLists(t *testing.T) {
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "getdocumentlist_response.json"))
+	// Close the server
+	defer mockServer.Close()
 
-// TODO: Move to a reusable helper function
-// arguments would be *testing, filename
-//
-//	[]byte
-func fixture(t *testing.T, name string) []byte {
-	// Helper marks the calling function as a test helper function
-	t.Helper()
-	// Load fixture file and return []byte()
-	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", name)); err != nil {
-		log.Println(err)
-		return []byte(``)
-	} else {
-		return d
+	ctx := context.Background()
+
+	cfg := Config{
+		AccessToken: os.Getenv("ACCESS_TOKEN"),
+		ActorId:     os.Getenv("ACTOR_ID"),
+		Endpoint:    mockServer.URL,
+	}
+
+	s := map[string]any{}
+	json.Unmarshal(testhelper.Fixture(t, "getdocumentlists_request.json"), &s)
+
+	if _, err := GetDocumentLists(ctx, cfg, DataObject{
+		Data: s,
+	}); err != nil {
+		t.Error(err)
 	}
 }
 
 func TestSaveShipment(t *testing.T) {
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// All sorts of things will be going on here
-		w.WriteHeader(http.StatusOK)
-		// Return the fixture data
-		w.Write(fixture(t, "shipment_response.json"))
-	}))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipment_response.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -70,12 +65,7 @@ func TestSaveShipment(t *testing.T) {
 }
 
 func TestGetDocuments(t *testing.T) {
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// All sorts of things will be going on here
-		w.WriteHeader(http.StatusOK)
-		// Return the fixture data
-		w.Write(fixture(t, "documents.json"))
-	}))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "documents.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -94,12 +84,7 @@ func TestGetDocuments(t *testing.T) {
 }
 
 func TestGetShipments(t *testing.T) {
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// All sorts of things will be going on here
-		w.WriteHeader(http.StatusOK)
-		// Return the fixture data
-		w.Write(fixture(t, "shipments.json"))
-	}))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments.json"))
 	// Close the server
 	defer mockServer.Close()
 
