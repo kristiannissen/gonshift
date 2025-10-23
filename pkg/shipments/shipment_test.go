@@ -9,6 +9,7 @@ import (
 	"path"
 	"testing"
 
+	"gonshift/pkg/models"
 	"gonshift/testhelper"
 )
 
@@ -28,7 +29,7 @@ func TestGetDocumentLists(t *testing.T) {
 	s := map[string]any{}
 	json.Unmarshal(testhelper.Fixture(t, "getdocumentlists_request.json"), &s)
 
-	if _, err := GetDocumentLists(ctx, cfg, DataObject{
+	if _, err := GetDocumentLists(ctx, cfg, &models.DataObject{
 		Data: s,
 	}); err != nil {
 		t.Error(err)
@@ -56,7 +57,7 @@ func TestSaveShipment(t *testing.T) {
 		json.Unmarshal(b, &s)
 	}
 
-	if _, err := SaveShipment(ctx, cfg, DataObject{
+	if _, err := SaveShipment(ctx, cfg, &models.DataObject{
 		Data:    s,
 		Options: map[string]any{"Labels": "PDF"},
 	}); err != nil {

@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"gonshift/pkg/models"
 	"gonshift/testhelper"
 )
 
@@ -24,7 +25,7 @@ func TestGetDropPoint(t *testing.T) {
 	}
 
 	// Payload
-	payload := DataObject{
+	payload := &models.DataObject{
 		Data:    map[string]any{},
 		Options: map[string]any{},
 	}

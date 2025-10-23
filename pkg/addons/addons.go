@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"gonshift/internal/restclient"
+	"gonshift/pkg/models"
 )
 
 type Config struct {
@@ -15,16 +16,11 @@ type Config struct {
 	Endpoint    string
 }
 
-type DataObject struct {
-	Data    map[string]interface{} `json:"data"`
-	Options map[string]interface{} `json:"options,omitempty"`
+func GetDropPoint(ctx context.Context, cfg Config) (*models.DataObject, error) {
+	return &models.DataObject{}, nil
 }
 
-func GetDropPoint(ctx context.Context, cfg Config) (DataObject, error) {
-	return DataObject{}, nil
-}
-
-func GetDropPoints(ctx context.Context, cfg Config, payload DataObject) (DataObject, error) {
+func GetDropPoints(ctx context.Context, cfg Config, payload *models.DataObject) (*models.DataObject, error) {
 	p, _ := json.Marshal(payload)
 
 	c := restclient.NewRestClient(
@@ -34,10 +30,10 @@ func GetDropPoints(ctx context.Context, cfg Config, payload DataObject) (DataObj
 
 	if b, err := c.Post(ctx, p); err != nil {
 		log.Println(err)
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	} else {
 		//
-		var d DataObject
+		d := &models.DataObject{}
 		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d.Data); err != nil {
 			log.Println(err)
 			return d, err

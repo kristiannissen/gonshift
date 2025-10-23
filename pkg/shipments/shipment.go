@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"gonshift/internal/restclient"
+	"gonshift/pkg/models"
 )
 
 func init() {
@@ -19,14 +20,9 @@ type Config struct {
 	Endpoint    string
 }
 
-type DataObject struct {
-	Data    map[string]interface{} `json:"data"`
-	Options map[string]interface{} `json:"options,omitempty"`
-}
-
 // https://helpcenter.nshift.com/hc/en-us/articles/4401176907676-API-Documentation#get_shipments
 // Used to return a shipment which has not been deleted.
-func GetShipments(ctx context.Context, cfg Config) (DataObject, error) {
+func GetShipments(ctx context.Context, cfg Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -34,15 +30,15 @@ func GetShipments(ctx context.Context, cfg Config) (DataObject, error) {
 	// This method has no body
 	if b, err := c.Get(ctx, []byte(``)); err != nil {
 		log.Println(err)
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	} else {
-		var do DataObject
-		json.Unmarshal(b, &do.Data)
-		return do, nil
+		d := &models.DataObject{}
+		json.Unmarshal(b, &d.Data)
+		return d, nil
 	}
 }
 
-func GetDocumentLists(ctx context.Context, cfg Config, dataobject DataObject) (DataObject, error) {
+func GetDocumentLists(ctx context.Context, cfg Config, dataobject *models.DataObject) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -50,23 +46,23 @@ func GetDocumentLists(ctx context.Context, cfg Config, dataobject DataObject) (D
 
 	s, err := json.Marshal(dataobject)
 	if err != nil {
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	}
 
 	if b, err := c.Get(ctx, s); err != nil {
 		log.Println(err)
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	} else {
-		var d DataObject
+		d := &models.DataObject{}
 		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d.Data); err != nil {
 			log.Println(err)
-			return DataObject{}, err
+			return &models.DataObject{}, err
 		}
 		return d, nil
 	}
 }
 
-func GetDocuments(ctx context.Context, cfg Config) (DataObject, error) {
+func GetDocuments(ctx context.Context, cfg Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -74,19 +70,19 @@ func GetDocuments(ctx context.Context, cfg Config) (DataObject, error) {
 
 	if b, err := c.Get(ctx, []byte(``)); err != nil {
 		log.Println(err)
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	} else {
 		// Decode documents
-		var d DataObject
+		d := &models.DataObject{}
 		if err := json.NewDecoder(bytes.NewReader(b)).Decode(&d.Data); err != nil {
 			log.Println(err)
-			return DataObject{}, nil
+			return &models.DataObject{}, nil
 		}
 		return d, nil
 	}
 }
 
-func SaveShipment(ctx context.Context, cfg Config, dataobject DataObject) (DataObject, error) {
+func SaveShipment(ctx context.Context, cfg Config, dataobject *models.DataObject) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),
@@ -94,16 +90,16 @@ func SaveShipment(ctx context.Context, cfg Config, dataobject DataObject) (DataO
 	// Marshal the shipment
 	s, err := json.Marshal(dataobject)
 	if err != nil {
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	}
 
 	// This method has no body
 	if b, err := c.Post(ctx, s); err != nil {
 		log.Println(err)
-		return DataObject{}, err
+		return &models.DataObject{}, err
 	} else {
-		var do DataObject
-		json.Unmarshal(b, &do.Data)
-		return do, nil
+		d := &models.DataObject{}
+		json.Unmarshal(b, &d.Data)
+		return d, nil
 	}
 }
