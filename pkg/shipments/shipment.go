@@ -10,8 +10,10 @@ import (
 	"gonshift/pkg/models"
 )
 
-// https://helpcenter.nshift.com/hc/en-us/articles/4401176907676-API-Documentation#get_shipments
-// Used to return a shipment which has not been deleted.
+// GetShipments is used to return a shipment which has not been deleted
+// Example usage:
+//
+//	s := GetShipments(context.Content &models.Config) // OUTPUT
 func GetShipments(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
@@ -28,6 +30,8 @@ func GetShipments(ctx context.Context, cfg *models.Config) (*models.DataObject, 
 	}
 }
 
+// GetDocumentLists returns a list of all documents on a shipment
+// Example usage:
 func GetDocumentLists(ctx context.Context, cfg *models.Config, dataobject *models.DataObject) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
@@ -52,6 +56,8 @@ func GetDocumentLists(ctx context.Context, cfg *models.Config, dataobject *model
 	}
 }
 
+// GetDocuments returns a list of all documents encoded as base64 on a shipment.
+// Example usage:
 func GetDocuments(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
@@ -72,6 +78,8 @@ func GetDocuments(ctx context.Context, cfg *models.Config) (*models.DataObject, 
 	}
 }
 
+// SaveShipment is used to save a shipment to Inbox
+// Example usage:
 func SaveShipment(ctx context.Context, cfg *models.Config, dataobject *models.DataObject) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),

@@ -3,10 +3,8 @@ package shipments
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
-	"path"
 	"testing"
 
 	"gonshift/pkg/models"
@@ -14,7 +12,7 @@ import (
 )
 
 func TestGetDocumentLists(t *testing.T) {
-	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "getdocumentlist_response.json"))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/getdocumentlist_response.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -27,7 +25,7 @@ func TestGetDocumentLists(t *testing.T) {
 	}
 
 	s := map[string]any{}
-	json.Unmarshal(testhelper.Fixture(t, "getdocumentlists_request.json"), &s)
+	json.Unmarshal(testhelper.Fixture(t, "shipments/getdocumentlists_request.json"), &s)
 
 	if _, err := GetDocumentLists(ctx, cfg, &models.DataObject{
 		Data: s,
@@ -37,7 +35,7 @@ func TestGetDocumentLists(t *testing.T) {
 }
 
 func TestSaveShipment(t *testing.T) {
-	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipment_response.json"))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/shipment_response.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -51,11 +49,7 @@ func TestSaveShipment(t *testing.T) {
 	}
 	// Load and marshal shipment to json
 	s := map[string]any{}
-	if b, err := os.ReadFile(path.Join("..", "..", "fixtures", "shipment_request.json")); err != nil {
-		log.Println(err)
-	} else {
-		json.Unmarshal(b, &s)
-	}
+	json.Unmarshal(testhelper.Fixture(t, "shipments/shipment_request.json"), &s)
 
 	if _, err := SaveShipment(ctx, cfg, &models.DataObject{
 		Data:    s,
@@ -66,7 +60,7 @@ func TestSaveShipment(t *testing.T) {
 }
 
 func TestGetDocuments(t *testing.T) {
-	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "documents.json"))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/documents.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -85,7 +79,7 @@ func TestGetDocuments(t *testing.T) {
 }
 
 func TestGetShipments(t *testing.T) {
-	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments.json"))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/shipments_response.json"))
 	// Close the server
 	defer mockServer.Close()
 

@@ -14,28 +14,31 @@ import (
 // Example usage:
 //
 //	d := GetDropPoints(context.Context, &models.Config{}, &models.DataObject{
-//	  "data": "data": {
+//	    "data": "data": {
 //	    "ProdConceptID": "INT",
 //	    "ResultCount": "INT",
 //	    "Addresses": "ARRAY"
 //	  }
 //	})
 //
+// fmt.Println(d)
+//
 //	OUTPUT: {
-//	   "ProdConceptIDs": [
-//	      5318,
-//	      5319,
-//	      755
-//	   ],
-//	   "ResultCount": "2",
-//	   "Addresses": [
-//	      {
-//	         "Kind": 1,
-//	         "CountryCode": "FR",
-//	         "PostCode": "76000",
-//	         "Street1": "84, rue de Epeule"
-//	      }
-//	   ]
+//	  "ProdConceptIDs": [
+//	    5318,
+//	    5319,
+//	    755
+//	  ],
+//	  "ResultCount": "2",
+//	  "Addresses": [
+//	  {
+//	    "Kind": 1,
+//	    "CountryCode": "FR",
+//	    "PostCode": "76000",
+//	    "Street1": "84, rue de Epeule"
+//	  }
+//
+// ]
 func GetDropPoints(ctx context.Context, cfg *models.Config, payload *models.DataObject) (*models.DataObject, error) {
 	p, _ := json.Marshal(payload)
 
