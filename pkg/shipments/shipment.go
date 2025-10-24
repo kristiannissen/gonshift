@@ -10,11 +10,11 @@ import (
 	"gonshift/pkg/models"
 )
 
-// GetShipments is used to return a shipment which has not been deleted
+// Shipments is used to return a shipment which has not been deleted
 // Example usage:
 //
-//	s := GetShipments(context.Content &models.Config) // OUTPUT
-func GetShipments(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
+//	s := Shipments(context.Content &models.Config) // OUTPUT
+func Shipments(ctx context.Context, cfg *models.Config) (*models.DataObject, error) {
 	c := restclient.NewRestClient(
 		restclient.WithEndpoint(cfg.Endpoint),
 		restclient.WithAccessToken(cfg.AccessToken),

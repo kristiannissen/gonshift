@@ -78,7 +78,7 @@ func TestGetDocuments(t *testing.T) {
 	}
 }
 
-func TestGetShipments(t *testing.T) {
+func TestShipments(t *testing.T) {
 	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/shipments_response.json"))
 	// Close the server
 	defer mockServer.Close()
@@ -92,7 +92,7 @@ func TestGetShipments(t *testing.T) {
 		Endpoint:    mockServer.URL,
 	}
 
-	if _, err := GetShipments(ctx, cfg); err != nil {
+	if _, err := Shipments(ctx, cfg); err != nil {
 		t.Error(err)
 	}
 }

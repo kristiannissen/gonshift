@@ -2,6 +2,7 @@ package addons
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"os"
 	"testing"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestGetDropPoints(t *testing.T) {
-	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "droppoints.json"))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "addons/droppoints_response.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -24,9 +25,13 @@ func TestGetDropPoints(t *testing.T) {
 		Endpoint:    mockServer.URL,
 	}
 
+	// Load and marshal shipment to json
+	s := map[string]any{}
+	json.Unmarshal(testhelper.Fixture(t, "addons/droppoints_request.json"), &s)
+
 	// Payload
 	payload := &models.DataObject{
-		Data:    map[string]any{},
+		Data:    s,
 		Options: map[string]any{},
 	}
 
