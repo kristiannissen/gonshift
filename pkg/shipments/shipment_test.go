@@ -35,7 +35,7 @@ func TestGetDocumentLists(t *testing.T) {
 }
 
 func TestSaveShipment(t *testing.T) {
-	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/shipment_response.json"))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, testhelper.Fixture(t, "shipments/saveshipment_response.json"))
 	// Close the server
 	defer mockServer.Close()
 
@@ -49,7 +49,7 @@ func TestSaveShipment(t *testing.T) {
 	}
 	// Load and marshal shipment to json
 	s := map[string]any{}
-	json.Unmarshal(testhelper.Fixture(t, "shipments/shipment_request.json"), &s)
+	json.Unmarshal(testhelper.Fixture(t, "shipments/saveshipment_request.json"), &s)
 
 	if _, err := SaveShipment(ctx, cfg, &models.DataObject{
 		Data:    s,
@@ -73,7 +73,7 @@ func TestGetDocuments(t *testing.T) {
 		Endpoint:    mockServer.URL,
 	}
 
-	if _, err := GetShipments(ctx, cfg); err != nil {
+	if _, err := Shipments(ctx, cfg); err != nil {
 		t.Error(err)
 	}
 }
