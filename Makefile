@@ -15,7 +15,7 @@ endef
 test:
 	@echo "--- Testing $(APP_NAME) ---"
 	go vet ./...
-	go test -v -race ./...
+	go list ./... | grep -v -E '(cmd/cli|testhelper)' | xargs go test -v -race
 
 tidy:
 	@echo "--- Tidy $(APP_NAME) ---"

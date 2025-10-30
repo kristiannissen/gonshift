@@ -73,7 +73,7 @@ func TestGetDocuments(t *testing.T) {
 		Endpoint:    mockServer.URL,
 	}
 
-	if _, err := Shipments(ctx, cfg); err != nil {
+	if _, err := GetDocuments(ctx, cfg); err != nil {
 		t.Error(err)
 	}
 }

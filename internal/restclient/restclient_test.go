@@ -4,41 +4,18 @@ package restclient
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"path"
 	"testing"
 	"time"
 
-	"github.com/joho/godotenv"
+	"gonshift/testhelper"
 )
 
-func init() {
-	if err := godotenv.Load(path.Join("..", "..", ".env")); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func fixture(t *testing.T, name string) []byte {
-	// Helper marks the calling function as a test helper function
-	t.Helper()
-	// Load fixture file and return []byte()
-	if d, err := os.ReadFile(path.Join("..", "..", "fixtures", name)); err != nil {
-		log.Fatal(err)
-		return []byte(``)
-	} else {
-		return d
-	}
-}
-
 func TestRestClientPostSuccess(t *testing.T) {
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		// Write response body
-		w.Write([]byte(`{"message": "OK"}`))
-	}))
+	mockServer := testhelper.NewTestServer(t, http.StatusOK, []byte(`{"message": "OK"}`))
+
 	// Close the server
 	defer mockServer.Close()
 
@@ -56,11 +33,9 @@ func TestRestClientPostSuccess(t *testing.T) {
 }
 
 func TestRestClientError(t *testing.T) {
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusUnauthorized)
-		// Write response body
-		w.Write(fixture(t, "errors.json"))
-	}))
+
+	mockServer := testhelper.NewTestServer(t, http.StatusUnauthorized, testhelper.Fixture(t, "errors.json"))
+
 	// Close the server
 	defer mockServer.Close()
 
@@ -95,7 +70,6 @@ func TestRestClientTimeout(t *testing.T) {
 	c := NewRestClient(
 		WithEndpoint(mockServer.URL),
 		WithAccessToken(os.Getenv("ACCESS_TOKEN")),
-		WithDebug(true),
 	)
 
 	if _, err := c.Get(ctx, []byte(``)); err == nil {
